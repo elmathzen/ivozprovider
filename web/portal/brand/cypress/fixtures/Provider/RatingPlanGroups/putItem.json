@@ -1,0 +1,39 @@
+{
+  "request": {
+    "name": {
+      "en": "Updated",
+      "es": "Actualizado",
+      "ca": "Actualizado",
+      "it": "Aggiornato"
+    },
+    "description": {
+      "en": "",
+      "es": "",
+      "ca": "",
+      "it": ""
+    },
+    "currency": null
+  },
+  "response": {
+    "body": {
+        "id": 1,
+        "name": {
+          "en": "Updated",
+          "es": "Actualizado",
+          "ca": "Actualizado",
+          "it": "Aggiornato"
+        },
+        "description": {
+          "en": "",
+          "es": "",
+          "ca": "",
+          "it": ""
+        },
+        "currency": null
+    },
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "statusCode": 200
+  }
+}
