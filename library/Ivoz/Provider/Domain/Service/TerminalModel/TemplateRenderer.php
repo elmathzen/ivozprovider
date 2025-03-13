@@ -2,138 +2,62 @@
 
 namespace Ivoz\Provider\Domain\Service\TerminalModel;
 
-use Ivoz\Core\Domain\DataTransferObjectInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class TemplateRenderer
 {
-    const FORBIDDEN_FUNCTIONS = [
-        'exec',       // Returns last line of commands output
-        'passthru',   // Passes commands output directly to the browser
-        'system',     // Passes commands output directly to the browser and returns last line
-        'shell_exec', // Returns commands output
-        'popen',      // Opens read or write pipe to process of a command
-        'proc_open',  // Similar to popen() but greater degree of control
-        'pcntl_exec', // Executes a program
+    private $serviceLocator;
 
-        'require',
-        'require_once',
-        'include',
-        'include_once',
-
-        'phpinfo',
-        'getenv',
-        'putenv',
-
-        'fopen',
-        'file_get_contents',
-        'file_put_contents',
-    ];
-
-    /**
-     * @param array<string, DataTransferObjectInterface> $args
-     */
-    public function __construct(
-        private string $templatePath,
-        private array $args
-    ) {
-        if (!is_file($this->templatePath)) {
-            throw new \Exception(
-                'Template not found in path ' . $this->templatePath
-            );
-        }
+    public function __construct(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
     }
 
-    public function execute(): string
+    public function render(string $templateBody, array $params = []): string
     {
-        $templateWrapper = str_replace(
-            '[__TEMPLATE_BODY__]',
-            (string) \file_get_contents($this->templatePath),
-            $this->getTemplateWrapper()
-        );
+        $className = 'TemplateRenderer' . md5($templateBody);
 
-        $serializedArgs = base64_encode(
-            serialize($this->args)
-        );
+        $classDefinition = "class {$className} {
+                private \$params = [];
 
-        $tmpFilePath = $this->createTmpFile(
-            $templateWrapper
-        );
-
-        $command = sprintf(
-            'php -d disable_functions=%s %s %s',
-            implode(',', self::FORBIDDEN_FUNCTIONS),
-            $tmpFilePath,
-            $serializedArgs
-        );
-
-        $content = shell_exec($command);
-        unlink($tmpFilePath);
-        if (!$content) {
-            throw new \RuntimeException('Unable to evaluate template');
-        }
-
-        return $content;
-    }
-
-    private function getTemplateWrapper(): string
-    {
-        $templateWrapper = '<?php
-            require \'/opt/irontec/ivozprovider/library/vendor/autoload.php\';
-            // There is no SERVER_NAME in console commands, inject it
-            $_SERVER["SERVER_NAME"] = "[__SERVER_NAME__]";
-
-            function getenv() {
-                return ""; // Some vendor require this function
-            }
-
-            class TemplateWrapper
-            {
-                public function __construct($input)
+                public function __construct(\$params)
                 {
-                    $data = unserialize(base64_decode($input));
-                    foreach ($data as $key => $val) {
-                        $this->$key = $val;
-                    }
+                    \$this->params = \$params;
+                }
+
+                public function __get(\$name)
+                {
+                    return \$this->params[\$name] ?? null;
+                }
+
+                public function getServiceLocator()
+                {
+                    return \$this->serviceLocator;
                 }
 
                 public function run()
                 {
                     error_reporting(error_reporting() & ~E_NOTICE);
-                    ?>
-                    [__TEMPLATE_BODY__]
-                    <?php
+                    ?>[__TEMPLATE_BODY__]<?php
                 }
             }
+        ";
 
-            $wrapper = new TemplateWrapper($argv[count($argv) - 1]);
-            $wrapper->run();
-        ?>';
-
-        $serverName = ($_SERVER['SERVER_NAME'] ?? 'unknown.server.name');
-        return str_replace(
-            '[__SERVER_NAME__]',
-            (string) $serverName,
-            $templateWrapper,
+        $classDefinition = str_replace(
+            '[__TEMPLATE_BODY__]',
+            str_replace('$', '\\$', $templateBody),
+            $classDefinition
         );
-    }
 
-    private function createTmpFile(string $templateWrapper): string
-    {
-        $tmpFilePath = tempnam(
-            '/tmp',
-            'provision-template-'
-        );
-        if (!$tmpFilePath) {
-            throw new \RuntimeException('Unable to create tmp file');
-        }
-        $handle = fopen($tmpFilePath, 'w');
-        if (!$handle) {
-            throw new \RuntimeException('Unable to open tmp file');
-        }
+        eval($classDefinition);
 
-        fwrite($handle, $templateWrapper);
-        fclose($handle);
+        $instance = new $className($params);
+        $instance->serviceLocator = $this->serviceLocator;
 
-        return $tmpFilePath;
+        ob_start();
+        $instance->run();
+        $output = ob_get_clean();
+
+        return $output;
     }
 }
