@@ -1,0 +1,168 @@
+dpkg-buildpackage: info: source package ivozprovider
+dpkg-buildpackage: info: source version 4.3~4.3.0
+dpkg-buildpackage: info: source distribution UNRELEASED
+dpkg-buildpackage: info: source changed by Irontec IvozProvider Team <ivozprovider@irontec.com>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+ fakeroot debian/rules clean
+debian/rules:48: warning: overriding recipe for target 'build_doc'
+debian/rules:7: warning: ignoring old recipe for target 'build_doc'
+dh clean --with systemd --parallel
+   dh_clean
+ debian/rules build
+debian/rules:48: warning: overriding recipe for target 'build_doc'
+debian/rules:7: warning: ignoring old recipe for target 'build_doc'
+dh build --with systemd --parallel
+   dh_update_autotools_config
+   dh_autoreconf
+   debian/rules override_dh_auto_build
+make[1]: Entering directory '/home/aiuser/projets/ivozprovider'
+debian/rules:48: warning: overriding recipe for target 'build_doc'
+debian/rules:7: warning: ignoring old recipe for target 'build_doc'
+git config --global http.sslVerify false
+cd library ; composer --no-interaction --no-dev --no-progress --optimize-autoloader --ignore-platform-req=ext-simplexml --ignore-platform-req=ext-mailparse --ignore-platform-req=ext-xml install
+Installing dependencies from lock file
+Verifying lock file contents can be installed on current platform.
+Package operations: 135 installs, 0 updates, 0 removals
+  - Syncing composer/package-versions-deprecated (1.11.99.5) into cache
+  - Syncing symfony/flex (v1.18.6) into cache
+  - Syncing willdurand/negotiation (3.1.0) into cache
+  - Syncing symfony/polyfill-php80 (v1.31.0) into cache
+  - Syncing psr/link (1.1.1) into cache
+  - Syncing symfony/web-link (v5.4.3) into cache
+  - Syncing symfony/polyfill-ctype (v1.31.0) into cache
+  - Syncing symfony/deprecation-contracts (v3.0.2) into cache
+  - Syncing symfony/serializer (v5.4.31) into cache
+  - Syncing symfony/polyfill-mbstring (v1.31.0) into cache
+  - Syncing symfony/polyfill-intl-normalizer (v1.28.0) into cache
+  - Syncing symfony/polyfill-intl-grapheme (v1.28.0) into cache
+  - Syncing symfony/string (v5.4.31) into cache
+  - Syncing symfony/property-info (v5.4.24) into cache
+  - Syncing symfony/property-access (v5.4.26) into cache
+  - Syncing symfony/polyfill-php73 (v1.31.0) into cache
+  - Syncing symfony/http-foundation (v5.4.31) into cache
+  - Syncing psr/event-dispatcher (1.0.0) into cache
+  - Syncing symfony/event-dispatcher-contracts (v3.0.2) into cache
+  - Syncing symfony/event-dispatcher (v5.4.26) into cache
+  - Syncing symfony/var-dumper (v5.4.29) into cache
+  - Syncing psr/log (2.0.0) into cache
+  - Syncing symfony/error-handler (v5.4.29) into cache
+  - Syncing symfony/http-kernel (v5.4.31) into cache
+  - Syncing psr/container (1.1.2) into cache
+  - Syncing psr/cache (2.0.0) into cache
+  - Syncing fig/link-util (1.2.0) into cache
+  - Syncing doctrine/inflector (2.0.4) into cache
+  - Syncing api-platform/core (v2.6.8) into cache
+  - Syncing beberlei/assert (v3.3.2) into cache
+  - Syncing doctrine/lexer (1.2.3) into cache
+  - Syncing doctrine/annotations (1.14.3) into cache
+  - Syncing doctrine/cache (2.1.1) into cache
+  - Syncing doctrine/collections (1.6.8) into cache
+  - Syncing doctrine/event-manager (1.1.1) into cache
+  - Syncing doctrine/deprecations (v0.5.3) into cache
+  - Syncing doctrine/persistence (2.4.0) into cache
+  - Syncing doctrine/common (3.2.2) into cache
+  - Syncing symfony/routing (v5.4.3) into cache
+  - Syncing symfony/polyfill-php81 (v1.31.0) into cache
+  - Syncing symfony/finder (v5.4.3) into cache
+  - Syncing symfony/filesystem (v5.4.7) into cache
+  - Syncing symfony/service-contracts (v2.5.4) into cache
+  - Syncing symfony/dependency-injection (v5.4.7) into cache
+  - Syncing symfony/config (v5.4.7) into cache
+  - Syncing symfony/var-exporter (v5.4.7) into cache
+  - Syncing symfony/cache-contracts (v2.5.4) into cache
+  - Syncing symfony/cache (v5.4.7) into cache
+  - Syncing symfony/framework-bundle (v5.4.7) into cache
+  - Syncing symfony/stopwatch (v5.4.45) into cache
+  - Syncing symfony/console (v5.4.7) into cache
+  - Syncing laminas/laminas-code (4.7.1) into cache
+  - Syncing friendsofphp/proxy-manager-lts (v1.0.7) into cache
+  - Syncing doctrine/dbal (3.3.3) into cache
+  - Syncing doctrine/migrations (3.4.1) into cache
+  - Syncing symfony/doctrine-bridge (v5.4.24) into cache
+  - Syncing doctrine/sql-formatter (1.1.2) into cache
+  - Syncing doctrine/doctrine-bundle (2.5.7) into cache
+  - Syncing doctrine/doctrine-migrations-bundle (3.2.2) into cache
+  - Syncing psr/http-message (1.1) into cache
+  - Syncing guzzlehttp/promises (1.5.1) into cache
+  - Syncing symfony/polyfill-php72 (v1.28.0) into cache
+  - Syncing symfony/polyfill-intl-idn (v1.28.0) into cache
+  - Syncing ralouphie/getallheaders (3.0.3) into cache
+  - Syncing guzzlehttp/psr7 (1.9.1) into cache
+  - Syncing guzzlehttp/guzzle (6.5.8) into cache
+  - Syncing graze/guzzle-jsonrpc (3.2.1) into cache
+  - Syncing nelmio/cors-bundle (2.2.0) into cache
+  - Syncing symfony/password-hasher (v5.4.31) into cache
+  - Syncing symfony/security-core (v5.4.30) into cache
+  - Syncing symfony/security-http (v5.4.31) into cache
+  - Syncing symfony/security-guard (v5.4.3) into cache
+  - Syncing symfony/security-csrf (v5.4.3) into cache
+  - Syncing symfony/security-bundle (v5.4.26) into cache
+  - Syncing namshi/jose (7.2.3) into cache
+  - Syncing lcobucci/clock (2.1.0) into cache
+  - Syncing lcobucci/jwt (4.1.5) into cache
+  - Syncing lexik/jwt-authentication-bundle (v2.14.4) into cache
+  - Syncing symfony/proxy-manager-bridge (v5.4.6) into cache
+  - Syncing monolog/monolog (2.4.0) into cache
+  - Syncing symfony/monolog-bridge (v5.4.3) into cache
+  - Syncing symfony/monolog-bundle (v3.7.1) into cache
+  - Syncing symfony/mime (v5.4.26) into cache
+  - Syncing egulias/email-validator (3.1.2) into cache
+  - Syncing symfony/mailer (v5.4.8) into cache
+  - Syncing symfony/expression-language (v5.4.7) into cache
+  - Syncing ramsey/collection (1.2.2) into cache
+  - Syncing brick/math (0.9.3) into cache
+  - Syncing ramsey/uuid (4.2.3) into cache
+  - Syncing doctrine/instantiator (1.4.1) into cache
+  - Syncing doctrine/orm (2.11.2) into cache
+  - Syncing irontec/ivoz-core (5.0) into cache
+  - Syncing irontec/ivoz-core-bundle (5.0) into cache
+  - Syncing twig/twig (v3.8.0) into cache
+  - Syncing symfony/translation-contracts (v2.5.4) into cache
+  - Syncing symfony/twig-bridge (v5.4.34) into cache
+  - Syncing irontec/ivoz-api (5.0) into cache
+  - Syncing symfony/validator (v5.4.48) into cache
+  - Syncing gesdinet/jwt-refresh-token-bundle (v0.12.0) into cache
+  - Syncing irontec/ivoz-api-bundle (5.0) into cache
+  - Syncing nikic/php-parser (v4.13.2) into cache
+  - Syncing symfony/maker-bundle (v1.38.0) into cache
+  - Syncing irontec/ivoz-dev-tools (6.0) into cache
+  - Syncing symfony/twig-bundle (v5.4.3) into cache
+  - Syncing symfony/translation (v5.4.45) into cache
+  - Syncing symfony/templating (v5.4.3) into cache
+  - Syncing symfony/polyfill-intl-icu (v1.25.0) into cache
+  - Syncing symfony/options-resolver (v5.4.3) into cache
+  - Syncing symfony/form (v5.4.33) into cache
+  - Syncing symfony/dotenv (v5.4.5) into cache
+  - Syncing symfony/debug-bundle (v5.4.3) into cache
+  - Syncing symfony/asset (v5.4.7) into cache
+  - Syncing symfony/yaml (v5.4.45) into cache
+  - Syncing incenteev/composer-parameter-handler (v2.1.4) into cache
+  - Syncing beberlei/doctrineextensions (v1.3.0) into cache
+  - Syncing sebastian/recursion-context (4.0.4) into cache
+  - Syncing sebastian/exporter (4.0.4) into cache
+  - Syncing sebastian/diff (4.0.4) into cache
+  - Syncing sebastian/comparator (4.0.6) into cache
+  - Syncing webmozart/assert (1.11.0) into cache
+  - Syncing phpdocumentor/reflection-common (2.2.0) into cache
+  - Syncing phpdocumentor/type-resolver (1.6.2) into cache
+  - Syncing phpdocumentor/reflection-docblock (5.3.0) into cache
+  - Syncing irontec/prophecy (1.13.1) into cache
+  - Syncing irontec/wkhtmltopdf-amd64 (0.12.6.1) into cache
+  - Syncing irontec/zend-mp3 (1.8.3) into cache
+  - Syncing symfony/process (v5.4.47) into cache
+  - Syncing knplabs/knp-snappy (v1.4.3) into cache
+  - Syncing php-mime-mail-parser/php-mime-mail-parser (7.0.0) into cache
+  - Syncing phpxmlrpc/phpxmlrpc (4.9.2) into cache
+  - Syncing snc/redis-bundle (3.6.0) into cache
+  - Syncing symfony/polyfill-util (v1.28.0) into cache
+  - Syncing xamin/handlebars.php (v0.10.5) into cache
+  - Installing composer/package-versions-deprecated (1.11.99.5): Cloning b4f54f74ef from cache
+  - Installing symfony/flex (v1.18.6): Cloning 130851b90c from cache
+PHP Fatal error:  Declaration of Symfony\Flex\Command\RemoveCommand::execute(Symfony\Component\Console\Input\InputInterface $input, Symfony\Component\Console\Output\OutputInterface $output) must be compatible with Composer\Command\RemoveCommand::execute(Symfony\Component\Console\Input\InputInterface $input, Symfony\Component\Console\Output\OutputInterface $output): int in /home/aiuser/projets/ivozprovider/library/vendor/symfony/flex/src/Command/RemoveCommand.php on line 30
+
+Fatal error: Declaration of Symfony\Flex\Command\RemoveCommand::execute(Symfony\Component\Console\Input\InputInterface $input, Symfony\Component\Console\Output\OutputInterface $output) must be compatible with Composer\Command\RemoveCommand::execute(Symfony\Component\Console\Input\InputInterface $input, Symfony\Component\Console\Output\OutputInterface $output): int in /home/aiuser/projets/ivozprovider/library/vendor/symfony/flex/src/Command/RemoveCommand.php on line 30
+make[1]: *** [debian/rules:15: build_library] Error 255
+make[1]: Leaving directory '/home/aiuser/projets/ivozprovider'
+make: *** [debian/rules:96: build] Error 2
+dpkg-buildpackage: error: debian/rules build subprocess returned exit status 2
