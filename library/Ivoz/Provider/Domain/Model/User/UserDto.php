@@ -10,6 +10,8 @@ class UserDto extends UserDtoAbstract
 {
     protected $sensitiveFields = [
         'pass',
+        'twoFactorSecret',
+        'twoFactorBackupCodes'
     ];
 
     public const CONTEXT_MY_PROFILE = 'myProfile';
@@ -121,6 +123,7 @@ class UserDto extends UserDtoAbstract
                 'maxCalls' => 'maxCalls',
                 'bossAssistantId' => 'bossAssistant',
                 'timezoneId' => 'timezone',
+                'twoFactorEnabled' => 'twoFactorEnabled',
             ];
         }
 
@@ -136,7 +139,8 @@ class UserDto extends UserDtoAbstract
                 'isBoss' => 'isBoss',
                 'maxCalls' => 'maxCalls',
                 'bossAssistantId' => 'bossAssistant',
-                'timezoneId' => 'timezone'
+                'timezoneId' => 'timezone',
+                'twoFactorEnabled' => 'twoFactorEnabled'
             ];
         }
 

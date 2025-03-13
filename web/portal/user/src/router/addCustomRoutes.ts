@@ -1,4 +1,5 @@
 import { Edit, RouteSpec } from '@irontec/ivoz-ui';
+import MyAccount from '../components/MyAccount';
 
 const addCustomRoutes = (routes: Array<RouteSpec>): Array<RouteSpec> => {
   if (routes.length === 0) {
@@ -13,7 +14,7 @@ const addCustomRoutes = (routes: Array<RouteSpec>): Array<RouteSpec> => {
   const accountRoute = routes.find((route) => {
     return route.path === '/my/account';
   }) as RouteSpec;
-  accountRoute.component = Edit;
+  accountRoute.component = MyAccount;
 
   return routes;
 };

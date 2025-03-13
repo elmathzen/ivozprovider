@@ -206,6 +206,12 @@ interface UserInterface extends LoggableEntityInterface
 
     public function getGsQRCode(): bool;
 
+    public function getTwoFactorEnabled(): bool;
+
+    public function getTwoFactorSecret(): ?string;
+
+    public function getTwoFactorBackupCodes(): ?string;
+
     public function getCompany(): CompanyInterface;
 
     public function getCallAcl(): ?CallAclInterface;

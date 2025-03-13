@@ -75,6 +75,23 @@
         <option name="unsigned">1</option>
       </options>
     </field>
+    <field name="twoFactorEnabled" type="boolean" column="twoFactorEnabled" nullable="false">
+      <options>
+        <option name="default">0</option>
+        <option name="unsigned">1</option>
+      </options>
+    </field>
+    <field name="twoFactorSecret" type="string" column="twoFactorSecret" length="100" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="twoFactorBackupCodes" type="string" column="twoFactorBackupCodes" length="1000" nullable="true">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">[JSON array of backup codes]</option>
+      </options>
+    </field>
     <many-to-one field="company" target-entity="Ivoz\Provider\Domain\Model\Company\CompanyInterface" fetch="LAZY">
       <join-columns>
         <join-column name="companyId" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>

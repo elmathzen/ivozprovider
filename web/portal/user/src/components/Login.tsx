@@ -1,8 +1,9 @@
 import { Login as DefaultLogin } from '@irontec/ivoz-ui/components';
 import { EntityValidator } from '@irontec/ivoz-ui/entities/EntityInterface';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStoreActions, useStoreState } from 'store';
+import TwoFactorVerify from './TwoFactorVerify';
 
 interface LoginProps {
   validator?: EntityValidator;
@@ -18,6 +19,8 @@ export default function Login(props: LoginProps): JSX.Element | null {
   const exchangeToken = useStoreActions(
     (actions) => actions.auth.exchangeToken
   );
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+  const [tempToken, setTempToken] = useState('');
 
   useEffect(() => {
     if (email && token) {
@@ -49,6 +52,19 @@ export default function Login(props: LoginProps): JSX.Element | null {
     return null;
   }
 
+  // If 2FA verification is required, show the verification component
+  if (twoFactorRequired && tempToken) {
+    return (
+      <TwoFactorVerify
+        tempToken={tempToken}
+        onCancel={() => {
+          setTwoFactorRequired(false);
+          setTempToken('');
+        }}
+      />
+    );
+  }
+
   const marshaller = (values: { username: string; password: string }) => {
     return {
       email: values.username,
@@ -56,5 +72,21 @@ export default function Login(props: LoginProps): JSX.Element | null {
     };
   };
 
-  return <DefaultLogin validator={validator} marshaller={marshaller} />;
+  // Handle login response to check for 2FA requirement
+  const onLoginResponse = (response: any) => {
+    if (response && response.twoFactorRequired && response.tempToken) {
+      setTwoFactorRequired(true);
+      setTempToken(response.tempToken);
+      return false; // Prevent default login success handling
+    }
+    return true; // Continue with default login success handling
+  };
+
+  return (
+    <DefaultLogin
+      validator={validator}
+      marshaller={marshaller}
+      onLoginResponse={onLoginResponse}
+    />
+  );
 }

@@ -1,0 +1,22 @@
+services:
+  # TOTP Service
+  Ivoz\Provider\Domain\Service\TwoFactorAuth\TotpService:
+    autowire: true
+    public: true
+
+  # Two-Factor Authentication Service
+  Ivoz\Provider\Domain\Service\TwoFactorAuth\TwoFactorAuthService:
+    autowire: true
+    public: true
+    arguments:
+      $totpService: '@Ivoz\Provider\Domain\Service\TwoFactorAuth\TotpService'
+      $userRepository: '@Ivoz\Provider\Domain\Model\User\UserRepository'
+
+  # Two-Factor Authentication Controller
+  Controller\Auth\TwoFactorAuthController:
+    autowire: true
+    public: true
+    arguments:
+      $twoFactorAuthService: '@Ivoz\Provider\Domain\Service\TwoFactorAuth\TwoFactorAuthService'
+      $tokenStorage: '@security.token_storage'
+      $jwtManager: '@lexik_jwt_authentication.jwt_manager'

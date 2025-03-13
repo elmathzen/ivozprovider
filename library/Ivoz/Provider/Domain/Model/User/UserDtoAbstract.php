@@ -93,6 +93,21 @@ abstract class UserDtoAbstract implements DataTransferObjectInterface
     private $gsQRCode = false;
 
     /**
+     * @var bool|null
+     */
+    private $twoFactorEnabled = false;
+
+    /**
+     * @var string|null
+     */
+    private $twoFactorSecret = null;
+
+    /**
+     * @var string|null
+     */
+    private $twoFactorBackupCodes = null;
+
+    /**
      * @var int|null
      */
     private $id = null;
@@ -224,6 +239,9 @@ abstract class UserDtoAbstract implements DataTransferObjectInterface
             'rejectCallMethod' => 'rejectCallMethod',
             'multiContact' => 'multiContact',
             'gsQRCode' => 'gsQRCode',
+            'twoFactorEnabled' => 'twoFactorEnabled',
+            'twoFactorSecret' => 'twoFactorSecret',
+            'twoFactorBackupCodes' => 'twoFactorBackupCodes',
             'id' => 'id',
             'companyId' => 'company',
             'callAclId' => 'callAcl',
@@ -260,6 +278,9 @@ abstract class UserDtoAbstract implements DataTransferObjectInterface
             'rejectCallMethod' => $this->getRejectCallMethod(),
             'multiContact' => $this->getMultiContact(),
             'gsQRCode' => $this->getGsQRCode(),
+            'twoFactorEnabled' => $this->getTwoFactorEnabled(),
+            'twoFactorSecret' => $this->getTwoFactorSecret(),
+            'twoFactorBackupCodes' => $this->getTwoFactorBackupCodes(),
             'id' => $this->getId(),
             'company' => $this->getCompany(),
             'callAcl' => $this->getCallAcl(),
@@ -439,6 +460,42 @@ abstract class UserDtoAbstract implements DataTransferObjectInterface
     public function getGsQRCode(): ?bool
     {
         return $this->gsQRCode;
+    }
+
+    public function setTwoFactorEnabled(bool $twoFactorEnabled): static
+    {
+        $this->twoFactorEnabled = $twoFactorEnabled;
+
+        return $this;
+    }
+
+    public function getTwoFactorEnabled(): ?bool
+    {
+        return $this->twoFactorEnabled;
+    }
+
+    public function setTwoFactorSecret(?string $twoFactorSecret): static
+    {
+        $this->twoFactorSecret = $twoFactorSecret;
+
+        return $this;
+    }
+
+    public function getTwoFactorSecret(): ?string
+    {
+        return $this->twoFactorSecret;
+    }
+
+    public function setTwoFactorBackupCodes(?string $twoFactorBackupCodes): static
+    {
+        $this->twoFactorBackupCodes = $twoFactorBackupCodes;
+
+        return $this;
+    }
+
+    public function getTwoFactorBackupCodes(): ?string
+    {
+        return $this->twoFactorBackupCodes;
     }
 
     /**

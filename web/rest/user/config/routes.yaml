@@ -24,6 +24,45 @@ gesdinet_jwt_refresh_token:
   defaults: { _controller: gesdinet.jwtrefreshtoken:refresh }
 
 ###############################
+## Two-Factor Authentication
+###############################
+verify_two_factor:
+  path: '/two-factor/verify'
+  methods: ['POST']
+  defaults:
+    _controller: Controller\Auth\TwoFactorAuthController::verify
+    _api_resource_class: 'Model\Token'
+    _api_item_operation_name: 'verify_two_factor'
+    _api_receive: false
+
+enable_two_factor:
+  path: '/my/two-factor/enable'
+  methods: ['POST']
+  defaults:
+    _controller: Controller\Auth\TwoFactorAuthController::enable
+    _api_resource_class: 'Model\TwoFactor'
+    _api_item_operation_name: 'enable_two_factor'
+    _api_receive: false
+
+disable_two_factor:
+  path: '/my/two-factor/disable'
+  methods: ['POST']
+  defaults:
+    _controller: Controller\Auth\TwoFactorAuthController::disable
+    _api_resource_class: 'Model\TwoFactor'
+    _api_item_operation_name: 'disable_two_factor'
+    _api_receive: false
+
+regenerate_backup_codes:
+  path: '/my/two-factor/backup-codes'
+  methods: ['POST']
+  defaults:
+    _controller: Controller\Auth\TwoFactorAuthController::regenerateBackupCodes
+    _api_resource_class: 'Model\TwoFactor'
+    _api_item_operation_name: 'regenerate_backup_codes'
+    _api_receive: false
+
+###############################
 ## Custom routes
 ###############################
 get_my_dasboard:

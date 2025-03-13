@@ -105,6 +105,22 @@ abstract class UserAbstract
     protected $gsQRCode = false;
 
     /**
+     * @var bool
+     */
+    protected $twoFactorEnabled = false;
+
+    /**
+     * @var ?string
+     */
+    protected $twoFactorSecret = null;
+
+    /**
+     * @var ?string
+     * comment: JSON array of backup codes
+     */
+    protected $twoFactorBackupCodes = null;
+
+    /**
      * @var CompanyInterface
      */
     protected $company;
@@ -180,7 +196,8 @@ abstract class UserAbstract
         string $externalIpCalls,
         string $rejectCallMethod,
         bool $multiContact,
-        bool $gsQRCode
+        bool $gsQRCode,
+        bool $twoFactorEnabled
     ) {
         $this->setName($name);
         $this->setLastname($lastname);
@@ -192,6 +209,7 @@ abstract class UserAbstract
         $this->setRejectCallMethod($rejectCallMethod);
         $this->setMultiContact($multiContact);
         $this->setGsQRCode($gsQRCode);
+        $this->setTwoFactorEnabled($twoFactorEnabled);
     }
 
     abstract public function getId(): null|string|int;
@@ -275,6 +293,8 @@ abstract class UserAbstract
         Assertion::notNull($multiContact, 'getMultiContact value is null, but non null value was expected.');
         $gsQRCode = $dto->getGsQRCode();
         Assertion::notNull($gsQRCode, 'getGsQRCode value is null, but non null value was expected.');
+        $twoFactorEnabled = $dto->getTwoFactorEnabled();
+        Assertion::notNull($twoFactorEnabled, 'getTwoFactorEnabled value is null, but non null value was expected.');
         $company = $dto->getCompany();
         Assertion::notNull($company, 'getCompany value is null, but non null value was expected.');
 
@@ -288,12 +308,15 @@ abstract class UserAbstract
             $externalIpCalls,
             $rejectCallMethod,
             $multiContact,
-            $gsQRCode
+            $gsQRCode,
+            $twoFactorEnabled
         );
 
         $self
             ->setEmail($dto->getEmail())
             ->setPass($dto->getPass())
+            ->setTwoFactorSecret($dto->getTwoFactorSecret())
+            ->setTwoFactorBackupCodes($dto->getTwoFactorBackupCodes())
             ->setCompany($fkTransformer->transform($company))
             ->setCallAcl($fkTransformer->transform($dto->getCallAcl()))
             ->setBossAssistant($fkTransformer->transform($dto->getBossAssistant()))
@@ -342,6 +365,8 @@ abstract class UserAbstract
         Assertion::notNull($multiContact, 'getMultiContact value is null, but non null value was expected.');
         $gsQRCode = $dto->getGsQRCode();
         Assertion::notNull($gsQRCode, 'getGsQRCode value is null, but non null value was expected.');
+        $twoFactorEnabled = $dto->getTwoFactorEnabled();
+        Assertion::notNull($twoFactorEnabled, 'getTwoFactorEnabled value is null, but non null value was expected.');
         $company = $dto->getCompany();
         Assertion::notNull($company, 'getCompany value is null, but non null value was expected.');
 
@@ -358,6 +383,9 @@ abstract class UserAbstract
             ->setRejectCallMethod($rejectCallMethod)
             ->setMultiContact($multiContact)
             ->setGsQRCode($gsQRCode)
+            ->setTwoFactorEnabled($twoFactorEnabled)
+            ->setTwoFactorSecret($dto->getTwoFactorSecret())
+            ->setTwoFactorBackupCodes($dto->getTwoFactorBackupCodes())
             ->setCompany($fkTransformer->transform($company))
             ->setCallAcl($fkTransformer->transform($dto->getCallAcl()))
             ->setBossAssistant($fkTransformer->transform($dto->getBossAssistant()))
@@ -392,6 +420,9 @@ abstract class UserAbstract
             ->setRejectCallMethod(self::getRejectCallMethod())
             ->setMultiContact(self::getMultiContact())
             ->setGsQRCode(self::getGsQRCode())
+            ->setTwoFactorEnabled(self::getTwoFactorEnabled())
+            ->setTwoFactorSecret(self::getTwoFactorSecret())
+            ->setTwoFactorBackupCodes(self::getTwoFactorBackupCodes())
             ->setCompany(Company::entityToDto(self::getCompany(), $depth))
             ->setCallAcl(CallAcl::entityToDto(self::getCallAcl(), $depth))
             ->setBossAssistant(User::entityToDto(self::getBossAssistant(), $depth))
@@ -424,6 +455,9 @@ abstract class UserAbstract
             'rejectCallMethod' => self::getRejectCallMethod(),
             'multiContact' => self::getMultiContact(),
             'gsQRCode' => self::getGsQRCode(),
+            'twoFactorEnabled' => self::getTwoFactorEnabled(),
+            'twoFactorSecret' => self::getTwoFactorSecret(),
+            'twoFactorBackupCodes' => self::getTwoFactorBackupCodes(),
             'companyId' => self::getCompany()->getId(),
             'callAclId' => self::getCallAcl()?->getId(),
             'bossAssistantId' => self::getBossAssistant()?->getId(),
@@ -618,6 +652,50 @@ abstract class UserAbstract
     public function getGsQRCode(): bool
     {
         return $this->gsQRCode;
+    }
+
+    protected function setTwoFactorEnabled(bool $twoFactorEnabled): static
+    {
+        $this->twoFactorEnabled = $twoFactorEnabled;
+
+        return $this;
+    }
+
+    public function getTwoFactorEnabled(): bool
+    {
+        return $this->twoFactorEnabled;
+    }
+
+    protected function setTwoFactorSecret(?string $twoFactorSecret = null): static
+    {
+        if (!is_null($twoFactorSecret)) {
+            Assertion::maxLength($twoFactorSecret, 100, 'twoFactorSecret value "%s" is too long, it should have no more than %d characters, but has %d characters.');
+        }
+
+        $this->twoFactorSecret = $twoFactorSecret;
+
+        return $this;
+    }
+
+    public function getTwoFactorSecret(): ?string
+    {
+        return $this->twoFactorSecret;
+    }
+
+    protected function setTwoFactorBackupCodes(?string $twoFactorBackupCodes = null): static
+    {
+        if (!is_null($twoFactorBackupCodes)) {
+            Assertion::maxLength($twoFactorBackupCodes, 1000, 'twoFactorBackupCodes value "%s" is too long, it should have no more than %d characters, but has %d characters.');
+        }
+
+        $this->twoFactorBackupCodes = $twoFactorBackupCodes;
+
+        return $this;
+    }
+
+    public function getTwoFactorBackupCodes(): ?string
+    {
+        return $this->twoFactorBackupCodes;
     }
 
     protected function setCompany(CompanyInterface $company): static
