@@ -62,6 +62,15 @@ regenerate_backup_codes:
     _api_item_operation_name: 'regenerate_backup_codes'
     _api_receive: false
 
+verify_two_factor_setup:
+  path: '/my/two-factor/verify-setup'
+  methods: ['POST']
+  defaults:
+    _controller: Controller\Auth\TwoFactorAuthController::verifySetup
+    _api_resource_class: 'Model\TwoFactor'
+    _api_item_operation_name: 'verify_two_factor_setup'
+    _api_receive: false
+
 ###############################
 ## Custom routes
 ###############################

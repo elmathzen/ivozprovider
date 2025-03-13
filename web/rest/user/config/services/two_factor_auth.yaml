@@ -11,6 +11,7 @@ services:
     arguments:
       $totpService: '@Ivoz\Provider\Domain\Service\TwoFactorAuth\TotpService'
       $userRepository: '@Ivoz\Provider\Domain\Model\User\UserRepository'
+      $cache: '@cache.app'
 
   # Two-Factor Authentication Controller
   Controller\Auth\TwoFactorAuthController:
@@ -20,3 +21,4 @@ services:
       $twoFactorAuthService: '@Ivoz\Provider\Domain\Service\TwoFactorAuth\TwoFactorAuthService'
       $tokenStorage: '@security.token_storage'
       $jwtManager: '@lexik_jwt_authentication.jwt_manager'
+      $entityManager: '@doctrine.orm.entity_manager'

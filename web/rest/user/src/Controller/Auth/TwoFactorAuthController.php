@@ -2,6 +2,8 @@
 
 namespace Controller\Auth;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Ivoz\Provider\Domain\Model\User\User;
 use Ivoz\Provider\Domain\Model\User\UserInterface;
 use Ivoz\Provider\Domain\Service\TwoFactorAuth\TwoFactorAuthService;
 use Model\Token;
@@ -17,15 +19,18 @@ class TwoFactorAuthController
     private TwoFactorAuthService $twoFactorAuthService;
     private TokenStorageInterface $tokenStorage;
     private JWTTokenManagerInterface $jwtManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         TwoFactorAuthService $twoFactorAuthService,
         TokenStorageInterface $tokenStorage,
-        JWTTokenManagerInterface $jwtManager
+        JWTTokenManagerInterface $jwtManager,
+        EntityManagerInterface $entityManager
     ) {
         $this->twoFactorAuthService = $twoFactorAuthService;
         $this->tokenStorage = $tokenStorage;
         $this->jwtManager = $jwtManager;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -131,6 +136,44 @@ class TwoFactorAuthController
     }
 
     /**
+     * Verify setup code during 2FA enablement
+     */
+    public function verifySetup(Request $request): Response
+    {
+        try {
+            $user = $this->getCurrentUser();
+            if (!$user) {
+                return new JsonResponse(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            $content = json_decode($request->getContent(), true);
+            if (!isset($content['code']) || !isset($content['secret'])) {
+                return new JsonResponse(['error' => 'Code and secret are required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $code = $content['code'];
+            $secret = $content['secret'];
+
+            // Temporarily set the secret for verification
+            $user->setTwoFactorSecret($secret);
+            
+            // Verify the code
+            $isValid = $this->twoFactorAuthService->verifyCode($user, $code);
+            
+            if (!$isValid) {
+                return new JsonResponse(['error' => 'Invalid verification code'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // If valid, enable 2FA with the verified secret
+            $this->twoFactorAuthService->enableTwoFactor($user);
+
+            return new JsonResponse(['success' => true]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Get the current user
      */
     private function getCurrentUser(): ?UserInterface
@@ -153,23 +196,28 @@ class TwoFactorAuthController
      */
     private function getUserFromTempToken(string $tempToken): ?UserInterface
     {
-        // This is a placeholder - you would need to implement a way to validate
-        // the temporary token and retrieve the associated user
-        // For example, you might store temporary tokens in Redis with a short TTL
-        
-        // For now, we'll just decode the JWT and get the user
         try {
+            // Parse the JWT token
             $tokenData = $this->jwtManager->parse($tempToken);
-            $username = $tokenData['username'] ?? null;
             
-            if (!$username) {
+            // Check if this is a temporary token
+            if (!isset($tokenData['temp']) || $tokenData['temp'] !== true) {
                 return null;
             }
             
-            // Get user from username
-            // This would need to be implemented based on your user provider
-            // For now, we'll just return null
-            return null;
+            // Get the user ID from the token
+            $userId = $tokenData['id'] ?? null;
+            if (!$userId) {
+                return null;
+            }
+            
+            // Get the user from the repository
+            $user = $this->entityManager->getRepository(User::class)->find($userId);
+            if (!$user instanceof UserInterface) {
+                return null;
+            }
+            
+            return $user;
         } catch (\Exception $e) {
             return null;
         }

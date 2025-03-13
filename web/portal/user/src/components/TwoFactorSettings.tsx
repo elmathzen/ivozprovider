@@ -91,13 +91,25 @@ export default function TwoFactorSettings(props: TwoFactorSettingsProps): JSX.El
     setError(null);
     
     try {
-      // This would be a real verification endpoint in a production app
-      // For now, we'll just simulate success
-      setBackupCodes(setupData?.backupCodes || []);
-      setShowVerificationDialog(false);
-      setShowBackupCodes(true);
-      setSuccess('Two-factor authentication has been enabled');
-      onUpdate();
+      // Send the verification code to the server
+      const response = await axios.post(
+        `${config.API_URL}/my/two-factor/verify-setup`,
+        {
+          code: verificationCode,
+          secret: setupData?.secret
+        },
+        { withCredentials: true }
+      );
+      
+      if (response.data && response.data.success) {
+        setBackupCodes(setupData?.backupCodes || []);
+        setShowVerificationDialog(false);
+        setShowBackupCodes(true);
+        setSuccess('Two-factor authentication has been enabled');
+        onUpdate();
+      } else {
+        setError('Invalid verification code');
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to verify code');
     } finally {

@@ -19,8 +19,15 @@ class UserAuthenticationSuccessHandler extends AuthenticationSuccessHandler
 
         // Check if user has 2FA enabled
         if ($user instanceof UserInterface && $user->getTwoFactorEnabled()) {
-            // Create a temporary token with limited claims
-            $tempToken = $this->jwtManager->create($user);
+            // Create a temporary token with limited claims and a 'temp' flag
+            $payload = [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'temp' => true,
+                'exp' => time() + 300 // 5 minutes expiration
+            ];
+            
+            $tempToken = $this->jwtManager->createFromPayload($user, $payload);
             
             // Return a response indicating 2FA is required
             return new JsonResponse([
