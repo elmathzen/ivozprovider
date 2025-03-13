@@ -1,0 +1,74 @@
+FROM debian:bookworm
+
+# Éviter les questions interactives pendant l'installation des paquets
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Mettre à jour les dépôts et installer les dépendances de base
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    debhelper \
+    dh-exec \
+    devscripts \
+    fakeroot \
+    lintian \
+    git \
+    curl \
+    wget \
+    gnupg \
+    apt-transport-https \
+    ca-certificates
+
+# Installer les dépendances de construction spécifiques à ivozprovider
+RUN apt-get install -y \
+    composer \
+    gettext \
+    libjs-jquery \
+    libjs-sphinxdoc \
+    make \
+    openssh-client \
+    php8.2 \
+    php8.2-cli \
+    php8.2-common \
+    php8.2-mailparse \
+    php8.2-mbstring \
+    php8.2-opcache \
+    php8.2-readline \
+    php8.2-xml \
+    php8.2-zip \
+    python3 \
+    python3-alabaster \
+    python3-sphinx \
+    python3-sphinx-rtd-theme \
+    ruby-dev \
+    sphinx-common \
+    nodejs \
+    npm \
+    golang
+
+# Installer yarn
+RUN npm install -g yarn
+
+# Ajouter le dépôt Irontec (si nécessaire)
+RUN echo "deb http://packages.irontec.com/debian bookworm main extra" > /etc/apt/sources.list.d/irontec.list \
+    && wget -qO - http://packages.irontec.com/public.key | apt-key add - \
+    && apt-get update
+
+# Créer un répertoire de travail
+WORKDIR /build
+
+# Copier le code source
+COPY . /build/
+
+# Script pour construire le paquet
+RUN echo '#!/bin/bash \n\
+set -e \n\
+cd /build \n\
+# Construire le paquet \n\
+dpkg-buildpackage -us -uc -b \n\
+# Copier les paquets générés dans le répertoire de sortie \n\
+cp -v ../*.deb /output/ \n\
+' > /build-package.sh \
+&& chmod +x /build-package.sh
+
+# Définir le point d'entrée
+ENTRYPOINT ["/build-package.sh"]
